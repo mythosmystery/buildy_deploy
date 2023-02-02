@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express'
+import { PushEvent } from '@octokit/webhooks-types'
 
 import bodyParser from 'body-parser'
 
@@ -10,8 +11,11 @@ app.get('/', (_req: Request, res: Response) => {
     res.send('Hello World!')
 })
 
-app.post('/webhooks', (req: Request, res: Response) => {
-    console.log(req.body)
+app.post('/webhooks', (req, res: Response) => {
+    const body: PushEvent = req.body
+     if (body.ref === `refs/heads/${process.env.BRANCH || 'main'}`) {
+        console.log('Main branch updated, redeploying...')
+     }
     res.send('OK')
 })
 
